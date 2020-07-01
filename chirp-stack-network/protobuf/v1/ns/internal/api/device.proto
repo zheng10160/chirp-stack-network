@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package api;
+
+option go_package = "github.com/jon177/lky-network-server/protobuf/v1/ns/internal/api";
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+service DeviceService {
+    // Get returns the device matching the given DevId.
+    rpc Get (GetDeviceRequest) returns (GetDeviceResponse) {
+        option (google.api.http) = {
+            get: "/api/devices/{dev_id}"
+        };
+    }
+}
+
+message Device {
+    //设备 id
+    int64 dev_id = 1;
+
+    //8字节，保留未来使用内容，ascii（0x21~0x7E
+    string reserved = 2;
+
+    //128字节，主要秘钥区，ascii（0x21~0x7E
+    string key_main = 3;
+
+    //864字节，随机扩展密码，ascii（0x21~0x7E)
+    string key_ext = 4;
+
+    //批次id
+    int64 batch_id = 5;
+
+    //批次内流水
+    string batch_serial = 6;
+
+}
+
+message GetDeviceRequest {
+    //设备 id
+    int64 dev_id = 1;
+}
+
+message GetDeviceResponse {
+    //Device object
+    Device device = 1;
+
+    // Created at 2
+    // Updated at 3
+    // First seen at 4
+
+    // Last seen timestamp.
+    google.protobuf.Timestamp last_seen_at = 5 [json_name = "lastSeenAt"];
+}
